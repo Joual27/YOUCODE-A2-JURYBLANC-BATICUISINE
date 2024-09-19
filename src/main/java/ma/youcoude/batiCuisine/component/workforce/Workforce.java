@@ -29,4 +29,7 @@ public class Workforce extends Component {
         this.workerProductivityCoefficient = workerProductivityCoefficient;
     }
 
+    public String getType(){
+        return "Workforce";
+    }
 }

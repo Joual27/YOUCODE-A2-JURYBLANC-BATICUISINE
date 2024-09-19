@@ -24,9 +24,12 @@ public class ProjectCreationProcess {
     public void handleFullProjectCreationProcess() {
         handleAssociatingCustomerToProject();
         System.out.println("----------------Creating Project -------------\n");
+        System.out.println("Enter the name of the project: ");
         String projectName = scanner.nextLine();
         projectData.setProjectName(projectName);
         projectData.setProjectStatus(ProjectStatus.ONGOING);
+        handleAddingMaterialProcess();
+        handleAddingWorkForceProcess();
     }
 
     public void handleAssociatingCustomerToProject() {
@@ -133,7 +136,7 @@ public class ProjectCreationProcess {
 
 
     public void handleAddingMaterialProcess(){
-        List<Component> components = projectData.getComponents();
+        List<Component> components = new ArrayList<>();
         while(true){
             System.out.println("-------Adding Materials--------\n");
             System.out.println("Enter the Material Name :");
@@ -256,7 +259,44 @@ public class ProjectCreationProcess {
             workforce.setHourlyRate(hourlyRate);
             workforce.setWorkerProductivityCoefficient(workerProductivityCoefficient);
             components.add(workforce);
+
+            System.out.println("Workforce " + workforceName + " Added Successfully!");
+            System.out.println("Do you want to add another Workforce ? (Y/N)");
+            String choice = scanner.nextLine().trim();
+            if(choice.equalsIgnoreCase("N")){
+                projectData.setComponents(components);
+                break;
+            }
         }
+    }
+
+    public void handleShowingOverallCostProcess(){
+        System.out.println("-------Calculating Overall Cost-------\n");
+        System.out.println("Is There any TVA applied ON THE PROJECT ? (Y/N)");
+        String choice = scanner.nextLine().trim();
+        if(choice.equalsIgnoreCase("Y")){
+            System.out.println("ENTER THE VAT VALUE IN %");
+            double VAT = scanner.nextDouble();
+            scanner.nextLine();
+            for(Component c : projectData.getComponents()){
+                c.setVAT(VAT);
+            }
+        }
+        System.out.println("Do you wanna apply any profit margin ?");
+        String choice1 = scanner.nextLine().trim();
+        if(choice1.equalsIgnoreCase("Y")){
+            System.out.println("ENTER THE PROFIT MARGIN IN %");
+
+            double profitMargin = scanner.nextDouble();
+            scanner.nextLine();
+            projectData.setProfitMargin(profitMargin);
+        }
+        System.out.println("Calculating Overall Price ....");
+
+    }
+
+    public void handleFetchingProjectDetails(){
+        System.out.println("-------Fetching Project Details -------\n");
     }
 
 
