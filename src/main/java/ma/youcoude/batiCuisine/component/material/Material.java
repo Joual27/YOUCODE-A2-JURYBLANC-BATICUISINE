@@ -36,6 +36,7 @@ public class Material extends Component {
         this.qualityCoefficient = qualityCoefficient;
     }
 
+    @Override
     public String getType(){
         return "Material";
     }

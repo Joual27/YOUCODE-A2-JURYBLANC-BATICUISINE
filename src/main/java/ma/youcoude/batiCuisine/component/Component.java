@@ -5,7 +5,7 @@ import ma.youcoude.batiCuisine.project.Project;
 public abstract class Component {
     private String componentId;
     private String componentName;
-    private double VAT;
+    private Double VAT;
     private Project project;
 
     public Component() {}
@@ -22,10 +22,10 @@ public abstract class Component {
     public void setComponentName(String componentName) {
         this.componentName = componentName;
     }
-    public double getVAT() {
+    public Double getVAT() {
         return VAT;
     }
-    public void setVAT(double VAT) {
+    public void setVAT(Double VAT) {
         this.VAT = VAT;
     }
     public Project getProject() {
