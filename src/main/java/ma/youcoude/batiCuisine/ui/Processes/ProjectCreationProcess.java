@@ -2,9 +2,11 @@ package ma.youcoude.batiCuisine.ui.Processes;
 
 import ma.youcoude.batiCuisine.component.Component;
 import ma.youcoude.batiCuisine.component.material.Material;
+import ma.youcoude.batiCuisine.component.workforce.Workforce;
 import ma.youcoude.batiCuisine.customer.Customer;
 import ma.youcoude.batiCuisine.customer.CustomerService;
 import ma.youcoude.batiCuisine.customer.interfaces.CustomerServiceI;
+import ma.youcoude.batiCuisine.enums.ProjectStatus;
 import ma.youcoude.batiCuisine.exceptions.CustomerNotFoundException;
 import ma.youcoude.batiCuisine.project.Project;
 import ma.youcoude.batiCuisine.utils.Validator;
@@ -24,6 +26,7 @@ public class ProjectCreationProcess {
         System.out.println("----------------Creating Project -------------\n");
         String projectName = scanner.nextLine();
         projectData.setProjectName(projectName);
+        projectData.setProjectStatus(ProjectStatus.ONGOING);
     }
 
     public void handleAssociatingCustomerToProject() {
@@ -135,16 +138,124 @@ public class ProjectCreationProcess {
             System.out.println("-------Adding Materials--------\n");
             System.out.println("Enter the Material Name :");
             String materialName = scanner.nextLine().trim();
-            System.out.println("Enter the Needed Quantity :");
-            double quantity = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.println("Enter the Price Per unit :");
-            double pricePerUnit = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.println("Enter the Transportation Cost :");
-            double transportationCost = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.println("Enter the quality coefficient of this material: ");
+            int quantity;
+            while(true){
+                System.out.println("Enter the Needed Quantity :");
+                quantity = scanner.nextInt();
+                scanner.nextLine();
+                if (quantity > 0){
+                    break;
+                }
+                else {
+                    System.out.println("can't be negative value! TRY AGAIN !");
+                }
+            }
+            double pricePerUnit;
+            while(true){
+                System.out.println("Enter the Price Per unit :");
+                pricePerUnit = scanner.nextDouble();
+                scanner.nextLine();
+                if (pricePerUnit > 0){
+                    break;
+                }
+                else {
+                    System.out.println("can't be negative value! TRY AGAIN !");
+                }
+            }
+            double transportationCost;
+            while (true){
+                System.out.println("Enter the Transportation Cost :");
+                transportationCost = scanner.nextDouble();
+                scanner.nextLine();
+                if (transportationCost > 0){
+                    break;
+                }
+                else {
+                    System.out.println("can't be negative value! TRY AGAIN !");
+                }
+            }
+            double qualityCoefficient;
+            while(true){
+                System.out.println("Enter the quality coefficient of this material: ");
+                qualityCoefficient = scanner.nextDouble();
+                scanner.nextLine();
+                if (Validator.validateCoefficients(qualityCoefficient)){
+                    break;
+                }
+                else {
+                    System.out.println("quality coefficient should be between 1 and 2");
+                }
+            }
+
+            Material material = new Material();
+            material.setComponentName(materialName);
+            material.setQuantity(quantity);
+            material.setPricePerUnit(pricePerUnit);
+            material.setTransportationCost(transportationCost);
+            material.setQualityCoefficient(qualityCoefficient);
+
+            components.add(material);
+
+            System.out.println("Material " + materialName + " Added Successfully!");
+            System.out.println("Do you want to add another Material ? (Y/N)");
+            String choice = scanner.nextLine().trim();
+
+            if(choice.equalsIgnoreCase("N")){
+                projectData.setComponents(components);
+                break;
+            }
+        }
+    }
+
+    public void handleAddingWorkForceProcess(){
+        List<Component> components = projectData.getComponents();
+        while(true){
+            System.out.println("-------Adding Work Force Process-------\n");
+            System.out.println("Enter the Workforce Name :");
+            String workforceName = scanner.nextLine().trim();
+            double hourlyRate;
+            while(true){
+                System.out.println("Enter the Hourly Rate :");
+                hourlyRate = scanner.nextDouble();
+                scanner.nextLine();
+                if (hourlyRate > 0){
+                    break;
+                }
+                else {
+                    System.out.println("can't be negative value! TRY AGAIN!");
+                }
+            }
+            int workHours;
+            while(true){
+                System.out.println("Enter the WorkHours :");
+                workHours = scanner.nextInt();
+                scanner.nextLine();
+                if (workHours > 0){
+                    break;
+                }
+                else {
+                    System.out.println("can't be negative value! TRY AGAIN!");
+                }
+            }
+            double workerProductivityCoefficient;
+
+            while(true){
+                System.out.println("Enter the productivity coefficient of this worker: ");
+                workerProductivityCoefficient = scanner.nextDouble();
+                scanner.nextLine();
+                if (Validator.validateCoefficients(workerProductivityCoefficient)){
+                    break;
+                }
+                else {
+                    System.out.println("productivity coefficient should be between 1 and 2");
+                }
+            }
+
+            Workforce workforce = new Workforce();
+            workforce.setComponentName(workforceName);
+            workforce.setHourlyRate(hourlyRate);
+            workforce.setWorkerProductivityCoefficient(workerProductivityCoefficient);
+            components.add(workforce);
         }
     }
 
