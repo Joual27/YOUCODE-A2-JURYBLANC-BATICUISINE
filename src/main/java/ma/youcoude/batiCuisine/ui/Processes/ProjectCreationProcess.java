@@ -2,7 +2,11 @@ package ma.youcoude.batiCuisine.ui.Processes;
 
 import ma.youcoude.batiCuisine.component.Component;
 import ma.youcoude.batiCuisine.component.material.Material;
+import ma.youcoude.batiCuisine.component.material.MaterialService;
+import ma.youcoude.batiCuisine.component.material.interfaces.MaterialServiceI;
+import ma.youcoude.batiCuisine.component.workforce.WorkForceService;
 import ma.youcoude.batiCuisine.component.workforce.Workforce;
+import ma.youcoude.batiCuisine.component.workforce.interfaces.WorkForceServiceI;
 import ma.youcoude.batiCuisine.customer.Customer;
 import ma.youcoude.batiCuisine.customer.CustomerService;
 import ma.youcoude.batiCuisine.customer.interfaces.CustomerServiceI;
@@ -16,9 +20,18 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ProjectCreationProcess {
-    private final Scanner scanner = new Scanner(System.in);
-    private final CustomerServiceI customerService = new CustomerService();
+    private final Scanner scanner ;
+    private final CustomerServiceI customerService;
+    private final MaterialServiceI materialService;
+    private final WorkForceServiceI workforceService;
     private Project projectData = new Project();
+
+    public ProjectCreationProcess() {
+        scanner = new Scanner(System.in);
+        customerService = new CustomerService();
+        materialService = new MaterialService();
+        workforceService = new WorkForceService();
+    }
 
 
     public void handleFullProjectCreationProcess() {
@@ -292,11 +305,40 @@ public class ProjectCreationProcess {
             projectData.setProfitMargin(profitMargin);
         }
         System.out.println("Calculating Overall Price ....");
-
+        handleFetchingProjectDetails();
     }
 
     public void handleFetchingProjectDetails(){
         System.out.println("-------Fetching Project Details -------\n");
+        System.out.println("Project Name :" + projectData.getProjectName());
+        System.out.println("Client :" + projectData.getCustomer().getFullName());
+        System.out.println("Address :" + projectData.getCustomer().getAddress());
+
+        System.out.println("-----Costs Details-----");
+
+        System.out.println("1 - Materials");
+        List<Material> materials = materialService.filterMaterialsOnly(projectData.getComponents());
+        for(Material m : materials){
+           System.out.println("- " + m.getComponentName() + " : " + materialService.calculateSpecificMaterialCost(m) + " $ (quantity : " + m.getQuantity() + "price per unit :" + m.getPricePerUnit() + "quality : " + m.getQualityCoefficient() + "transportation Cost : " + m.getTransportationCost()   +"$ )" );
+        }
+        Double baseMaterialCost = materialService.calculateOverallMaterialCost(materials);
+        Double finalMaterialCost;
+        if (materials.get(0).getVAT() == null){
+            System.out.println("No VAT was applied to this project");
+
+            System.out.println("Overall materials price is : " + baseMaterialCost);
+        }
+        else {
+            System.out.println("A TVA OF " + materials.get(0).getVAT() + "AS APPLIED TO THIS PROJECT :") ;
+            System.out.println("Overall Material Price Before VAT : " + baseMaterialCost);
+            finalMaterialCost = materialService.calculateFinalPriceWithVAT(baseMaterialCost , materials.get(0).getVAT());
+            System.out.println("Overall Material Price After VAT : " + finalMaterialCost);
+        }
+
+        System.out.println("2 - WorkForce");
+        List<Workforce> workforces  = workforceService.filterWorkForceOnly(projectData.getComponents());
+
+
     }
 
 

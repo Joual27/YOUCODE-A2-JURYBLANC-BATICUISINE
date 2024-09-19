@@ -29,6 +29,7 @@ public class Workforce extends Component {
         this.workerProductivityCoefficient = workerProductivityCoefficient;
     }
 
+    @Override
     public String getType(){
         return "Workforce";
     }
