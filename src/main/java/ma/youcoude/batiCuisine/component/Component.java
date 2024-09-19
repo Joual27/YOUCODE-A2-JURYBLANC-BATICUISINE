@@ -34,6 +34,7 @@ public abstract class Component {
     public void setProject(Project project) {
         this.project = project;
     }
+    abstract public String getType();
 
 
 }
