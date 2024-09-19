@@ -44,7 +44,7 @@ public class Menu {
     public void handleChoice(int choice){
         switch (choice) {
             case 1:
-                projectCreationProcess.handleAssociatingCustomerToProject();
+                projectCreationProcess.handleFullProjectCreationProcess();
                 break;
             case 2:
                 System.out.println("Show All Projects");

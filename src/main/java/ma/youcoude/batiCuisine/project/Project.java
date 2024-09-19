@@ -1,8 +1,11 @@
 package ma.youcoude.batiCuisine.project;
 
+import ma.youcoude.batiCuisine.component.Component;
 import ma.youcoude.batiCuisine.customer.Customer;
 import ma.youcoude.batiCuisine.enums.ProjectStatus;
 import ma.youcoude.batiCuisine.estimate.Estimate;
+
+import java.util.List;
 
 public class Project {
     private String projectId;
@@ -12,6 +15,7 @@ public class Project {
     private ProjectStatus projectStatus;
     private Customer customer;
     private Estimate estimate;
+    private List<Component> components;
 
     public Project(){}
 
@@ -56,6 +60,12 @@ public class Project {
     }
     public void setEstimate(Estimate estimate) {
         this.estimate = estimate;
+    }
+    public List<Component> getComponents() {
+        return components;
+    }
+    public void setComponents(List<Component> components) {
+        this.components = components;
     }
 
 }
