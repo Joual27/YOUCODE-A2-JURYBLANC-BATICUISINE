@@ -1,16 +1,30 @@
 package ma.youcoude.batiCuisine.ui.Processes;
 
+import ma.youcoude.batiCuisine.component.Component;
+import ma.youcoude.batiCuisine.component.material.Material;
 import ma.youcoude.batiCuisine.customer.Customer;
 import ma.youcoude.batiCuisine.customer.CustomerService;
 import ma.youcoude.batiCuisine.customer.interfaces.CustomerServiceI;
 import ma.youcoude.batiCuisine.exceptions.CustomerNotFoundException;
+import ma.youcoude.batiCuisine.project.Project;
 import ma.youcoude.batiCuisine.utils.Validator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ProjectCreationProcess {
     private final Scanner scanner = new Scanner(System.in);
     private final CustomerServiceI customerService = new CustomerService();
+    private Project projectData = new Project();
+
+
+    public void handleFullProjectCreationProcess() {
+        handleAssociatingCustomerToProject();
+        System.out.println("----------------Creating Project -------------\n");
+        String projectName = scanner.nextLine();
+        projectData.setProjectName(projectName);
+    }
 
     public void handleAssociatingCustomerToProject() {
        while (true) {
@@ -45,6 +59,21 @@ public class ProjectCreationProcess {
             System.out.println("Full Name : " + existingCustomer.getFullName());
             System.out.println("Address : " + existingCustomer.getAddress());
             System.out.println("Phone Number : " + existingCustomer.getPhoneNumber());
+
+            while (true){
+                System.out.println("Do you wanna associate the project to "+existingCustomer.getFullName()+" ? (Y/N)");
+                String choice = scanner.nextLine().trim();
+                if(choice.equalsIgnoreCase("Y")) {
+                    projectData.setCustomer(existingCustomer);
+                    break;
+                }
+                else if(choice.equalsIgnoreCase("N")) {
+                    break;
+                }
+                else {
+                    System.out.println("Invalid choice , TRY AGAIN !");
+                }
+            }
         }
         catch(CustomerNotFoundException e){
             System.out.println(e.getMessage());
@@ -77,6 +106,7 @@ public class ProjectCreationProcess {
 
         Customer createdCustomer = customerService.saveCustomer(newCustomer);
         System.out.println("Customer " + createdCustomer.getFullName() + " Created Successfully!");
+        projectData.setCustomer(createdCustomer);
     }
 
 
@@ -96,7 +126,29 @@ public class ProjectCreationProcess {
                 System.out.println("Invalid choice, TRY AGAIN!");
             }
         }
-
     }
+
+
+    public void handleAddingMaterialProcess(){
+        List<Component> components = projectData.getComponents();
+        while(true){
+            System.out.println("-------Adding Materials--------\n");
+            System.out.println("Enter the Material Name :");
+            String materialName = scanner.nextLine().trim();
+            System.out.println("Enter the Needed Quantity :");
+            double quantity = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.println("Enter the Price Per unit :");
+            double pricePerUnit = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.println("Enter the Transportation Cost :");
+            double transportationCost = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.println("Enter the quality coefficient of this material: ");
+        }
+    }
+
+
+
 
 }
