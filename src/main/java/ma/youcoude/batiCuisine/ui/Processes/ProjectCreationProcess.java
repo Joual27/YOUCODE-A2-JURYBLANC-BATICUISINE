@@ -43,6 +43,7 @@ public class ProjectCreationProcess {
         projectData.setProjectStatus(ProjectStatus.ONGOING);
         handleAddingMaterialProcess();
         handleAddingWorkForceProcess();
+        handleShowingOverallCostProcess();
     }
 
     public void handleAssociatingCustomerToProject() {
@@ -71,9 +72,8 @@ public class ProjectCreationProcess {
         System.out.println("-------Searching For Customer--------\n");
         System.out.println("Please enter the Full Name of the customer: ");
         String fullName = scanner.nextLine().trim();
-        Customer existingCustomer = new Customer();
         try{
-            existingCustomer = customerService.getCustomerByFullName(fullName);
+            Customer existingCustomer = customerService.getCustomerByFullName(fullName);
             System.out.println("Customer found !");
             System.out.println("Full Name : " + existingCustomer.getFullName());
             System.out.println("Address : " + existingCustomer.getAddress());
@@ -269,6 +269,7 @@ public class ProjectCreationProcess {
 
             Workforce workforce = new Workforce();
             workforce.setComponentName(workforceName);
+            workforce.setWorkHours(workHours);
             workforce.setHourlyRate(hourlyRate);
             workforce.setWorkerProductivityCoefficient(workerProductivityCoefficient);
             components.add(workforce);
@@ -295,51 +296,95 @@ public class ProjectCreationProcess {
                 c.setVAT(VAT);
             }
         }
-        System.out.println("Do you wanna apply any profit margin ?");
-        String choice1 = scanner.nextLine().trim();
-        if(choice1.equalsIgnoreCase("Y")){
-            System.out.println("ENTER THE PROFIT MARGIN IN %");
-
-            double profitMargin = scanner.nextDouble();
-            scanner.nextLine();
-            projectData.setProfitMargin(profitMargin);
+            System.out.println("Do you wanna apply any profit margin ? (Y/N)");
+            String choice1 = scanner.nextLine().trim();
+            if(choice1.equalsIgnoreCase("Y")){
+                System.out.println("ENTER THE PROFIT MARGIN IN %");
+                double profitMargin = scanner.nextDouble();
+                scanner.nextLine();
+                System.out.println("Profit Margin entered: " + profitMargin);
+                projectData.setProfitMargin(profitMargin);
+            }
+            System.out.println("Calculating Overall Price ....");
+            handleFetchingProjectDetails();
         }
-        System.out.println("Calculating Overall Price ....");
-        handleFetchingProjectDetails();
+
+        public void handleFetchingProjectDetails(){
+            System.out.println("-------Fetching Project Details -------\n");
+            System.out.println("Project Name :" + projectData.getProjectName());
+            System.out.println("Client :" + projectData.getCustomer().getFullName());
+            System.out.println("Address :" + projectData.getCustomer().getAddress());
+
+            System.out.println("-----Costs Details-----");
+
+            System.out.println("--------------------------------------------------");
+
+            System.out.println("1 - Materials");
+            List<Material> materials = materialService.filterMaterialsOnly(projectData.getComponents());
+            for(Material m : materials){
+               System.out.println("- " + m.getComponentName() + " : " + materialService.calculateSpecificMaterialCost(m) + " $ (quantity : " + m.getQuantity() + " price per unit :" + m.getPricePerUnit() + " quality : " + m.getQualityCoefficient() + " transportation Cost : " + m.getTransportationCost()   +" $ )" );
+            }
+            System.out.println("--------------------------------------------------");
+
+            Double finalMaterialCost = materialService.calculateOverallMaterialCost(materials);
+            if (projectData.getComponents().get(0).getVAT() == null){
+                System.out.println("No VAT was applied to this project");
+                System.out.println("Overall materials price is : " + finalMaterialCost);
+            }
+            else {
+                System.out.println("A TVA OF " + materials.get(0).getVAT() + " WAS APPLIED TO THIS MATERIALS :") ;
+                System.out.println("Overall Material Price Before VAT : " + finalMaterialCost);
+                finalMaterialCost = materialService.calculateFinalPriceWithVAT(finalMaterialCost , materials.get(0).getVAT());
+                System.out.println("Overall Material Price After VAT : " + finalMaterialCost);
+            }
+
+            System.out.println("--------------------------------------------------");
+            System.out.println("2 - WorkForce");
+            List<Workforce> workforces  = workforceService.filterWorkForceOnly(projectData.getComponents());
+            for(Workforce w : workforces){
+                System.out.println("- " + w.getComponentName() + " : " + workforceService.calculateSpecificWorkForceCost(w) + " $ ( salary per hour : " + w.getHourlyRate() + " Worked Hours : " + w.getWorkHours()+ " productivity :" + w.getWorkerProductivityCoefficient() + ")"  );
+            }
+            System.out.println("--------------------------------------------------");
+            Double finalWorkforceCost = workforceService.calculateOverallWorkForceCost(workforces);
+
+            if (projectData.getComponents().get(0).getVAT() == null){
+                System.out.println("No VAT was applied to this project");
+                System.out.println("Overall WORKFORCE price is : " + finalWorkforceCost);
+            }
+            else {
+                System.out.println("A TVA OF " + workforces.get(0).getVAT() + " WAS APPLIED TO WORKFORCE");
+                System.out.println("Overall Workforce Price Before VAT : " + finalWorkforceCost);
+                finalWorkforceCost = workforceService.calculateFinalPriceWithVAT(finalWorkforceCost , workforces.get(0).getVAT());
+                System.out.println("Overall Workforce Price After VAT : " + finalWorkforceCost);
+            }
+
+            Double overallProjectCost = finalMaterialCost + finalWorkforceCost;
+            System.out.println("--------------------------------------------------");
+
+
+            System.out.println("Overall Cost before profit margin: " + overallProjectCost);
+            double profitMargin = overallProjectCost * projectData.getProfitMargin() / 100 ;
+            System.out.println("Profit margin: " + profitMargin);
+            System.out.println("Overall Cost after profit margin: " + overallProjectCost + profitMargin);
+            System.out.println("--------------------------------------------------");
+
+            while (true){
+                System.out.println("Do you Want To Generate an estimate for This Project ? (Y/N)");
+                String input = scanner.nextLine().trim();
+                if (input.equalsIgnoreCase("y")){
+                    break;
+                }
+                else if (input.equalsIgnoreCase("n")){
+                    break;
+                }
+                else {
+                    System.out.println("Please enter a valid option !");
+                }
+            }
+
     }
 
-    public void handleFetchingProjectDetails(){
-        System.out.println("-------Fetching Project Details -------\n");
-        System.out.println("Project Name :" + projectData.getProjectName());
-        System.out.println("Client :" + projectData.getCustomer().getFullName());
-        System.out.println("Address :" + projectData.getCustomer().getAddress());
 
-        System.out.println("-----Costs Details-----");
-
-        System.out.println("1 - Materials");
-        List<Material> materials = materialService.filterMaterialsOnly(projectData.getComponents());
-        for(Material m : materials){
-           System.out.println("- " + m.getComponentName() + " : " + materialService.calculateSpecificMaterialCost(m) + " $ (quantity : " + m.getQuantity() + "price per unit :" + m.getPricePerUnit() + "quality : " + m.getQualityCoefficient() + "transportation Cost : " + m.getTransportationCost()   +"$ )" );
-        }
-        Double baseMaterialCost = materialService.calculateOverallMaterialCost(materials);
-        Double finalMaterialCost;
-        if (materials.get(0).getVAT() == null){
-            System.out.println("No VAT was applied to this project");
-
-            System.out.println("Overall materials price is : " + baseMaterialCost);
-        }
-        else {
-            System.out.println("A TVA OF " + materials.get(0).getVAT() + "AS APPLIED TO THIS PROJECT :") ;
-            System.out.println("Overall Material Price Before VAT : " + baseMaterialCost);
-            finalMaterialCost = materialService.calculateFinalPriceWithVAT(baseMaterialCost , materials.get(0).getVAT());
-            System.out.println("Overall Material Price After VAT : " + finalMaterialCost);
-        }
-
-        System.out.println("2 - WorkForce");
-        List<Workforce> workforces  = workforceService.filterWorkForceOnly(projectData.getComponents());
-
-
-    }
 
 
 
