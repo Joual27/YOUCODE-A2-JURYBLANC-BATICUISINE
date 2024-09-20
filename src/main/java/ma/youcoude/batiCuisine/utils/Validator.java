@@ -11,7 +11,7 @@ public class Validator {
 
 
     public static boolean validateCoefficients(double coefficient) {
-        if (coefficient > 1 && coefficient < 2) {
+        if (coefficient >= 1 && coefficient < 2) {
             return true;
         }
         return false;
