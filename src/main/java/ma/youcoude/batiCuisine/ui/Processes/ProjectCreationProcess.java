@@ -11,10 +11,19 @@ import ma.youcoude.batiCuisine.customer.Customer;
 import ma.youcoude.batiCuisine.customer.CustomerService;
 import ma.youcoude.batiCuisine.customer.interfaces.CustomerServiceI;
 import ma.youcoude.batiCuisine.enums.ProjectStatus;
+import ma.youcoude.batiCuisine.estimate.Estimate;
+import ma.youcoude.batiCuisine.estimate.EstimateService;
+import ma.youcoude.batiCuisine.estimate.interfaces.EstimateServiceI;
 import ma.youcoude.batiCuisine.exceptions.CustomerNotFoundException;
 import ma.youcoude.batiCuisine.project.Project;
+import ma.youcoude.batiCuisine.project.ProjectService;
+import ma.youcoude.batiCuisine.project.interfaces.ProjectServiceI;
+import ma.youcoude.batiCuisine.utils.DatesValidator;
+import ma.youcoude.batiCuisine.utils.EstimateGenerator;
 import ma.youcoude.batiCuisine.utils.Validator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -24,6 +33,8 @@ public class ProjectCreationProcess {
     private final CustomerServiceI customerService;
     private final MaterialServiceI materialService;
     private final WorkForceServiceI workforceService;
+    private final ProjectServiceI projectService;
+    private final EstimateServiceI estimateService;
     private Project projectData = new Project();
 
     public ProjectCreationProcess() {
@@ -31,6 +42,8 @@ public class ProjectCreationProcess {
         customerService = new CustomerService();
         materialService = new MaterialService();
         workforceService = new WorkForceService();
+        projectService = new ProjectService();
+        estimateService = new EstimateService();
     }
 
 
@@ -365,16 +378,65 @@ public class ProjectCreationProcess {
             System.out.println("Overall Cost before profit margin: " + overallProjectCost);
             double profitMargin = overallProjectCost * projectData.getProfitMargin() / 100 ;
             System.out.println("Profit margin: " + profitMargin);
-            System.out.println("Overall Cost after profit margin: " + overallProjectCost + profitMargin);
+            double estimateCost = overallProjectCost + profitMargin;
+            System.out.println("Overall Cost after profit margin: " + estimateCost);
             System.out.println("--------------------------------------------------");
 
             while (true){
                 System.out.println("Do you Want To Generate an estimate for This Project ? (Y/N)");
                 String input = scanner.nextLine().trim();
+                EstimateGenerator eg = new EstimateGenerator();
                 if (input.equalsIgnoreCase("y")){
+                    Project createdProject = projectService.saveProject(projectData);
+                    System.out.println("Project " + createdProject.getProjectName() + " Created Successfully!");
+                    LocalDateTime issueDate ;
+
+                    System.out.println("PLease provide the estimate issue Date");
+                    while (true){
+                        int days = DatesValidator.handleDays();
+                        int months = DatesValidator.handleMonths();
+                        int year = DatesValidator.handleYear();
+
+                        LocalDate date = LocalDate.of(year, months, days);
+                        if (DatesValidator.validateIssueDate(date)){
+                            issueDate = date.atStartOfDay();
+                            break;
+                        }
+                        else{
+                            System.out.println("Issue Date can't be before Current date");
+                        }
+                    }
+                    LocalDate validityDate;
+                    System.out.println("PLease provide the estimate Validity Date");
+
+                    while (true){
+                        int days = DatesValidator.handleDays();
+                        int months = DatesValidator.handleMonths();
+                        int year = DatesValidator.handleYear();
+
+                        LocalDate date = LocalDate.of(year, months, days);
+                        if (DatesValidator.validateValidityDate(date, issueDate)){
+                            validityDate = date;
+                            break;
+                        }
+                        else {
+                            System.out.println("Validity Date can't be before Issue Date");
+                        }
+                    }
+                    Estimate e = new Estimate();
+                    e.setIssuedAt(issueDate);
+                    e.setValidityDate(validityDate);
+                    e.setOverallEstimatedPrice(estimateCost);
+                    Project p = new Project();
+                    p.setProjectId(projectData.getProjectId());
+                    e.setProject(p);
+                    Estimate createdEstimate = estimateService.save(e);
+                    eg.generateEstimate(projectData);
                     break;
                 }
                 else if (input.equalsIgnoreCase("n")){
+                    Project createdProject = projectService.saveProject(projectData);
+                    System.out.println("Project " + createdProject.getProjectName() + " Created Successfully!");
                     break;
                 }
                 else {
@@ -383,6 +445,7 @@ public class ProjectCreationProcess {
             }
 
     }
+
 
 
 

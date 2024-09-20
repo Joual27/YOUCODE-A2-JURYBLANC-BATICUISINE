@@ -31,12 +31,13 @@ public class ProjectService implements ProjectServiceI {
             Project p = new Project();
             p.setProjectId(projectId);
             c.setProject(p);
-            if (c instanceof Material){
-                Material material = (Material) c;
+            if (c instanceof Material material){
+                material.setComponentId(UUID.randomUUID().toString());
                 materialRepository.save(material);
             }
             else{
                 Workforce workforce = (Workforce) c;
+                workforce.setComponentId(UUID.randomUUID().toString());
                 workForceRepository.save(workforce);
             }
         }
