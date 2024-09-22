@@ -1,11 +1,19 @@
 package ma.youcoude.batiCuisine.project;
 
+import ma.youcoude.batiCuisine.customer.Customer;
+import ma.youcoude.batiCuisine.customer.CustomerRepository;
+import ma.youcoude.batiCuisine.customer.interfaces.CustomerRepositoryI;
 import ma.youcoude.batiCuisine.database.DbConnection;
+import ma.youcoude.batiCuisine.enums.ProjectStatus;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectRepositoryI;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ProjectRepository implements ProjectRepositoryI {
 
@@ -31,6 +39,30 @@ public class ProjectRepository implements ProjectRepositoryI {
         }
         catch (SQLException e){
             e.printStackTrace();
+        }
+    }
+    @Override
+    public List<Project> getAllProjects(){
+        String query = "SELECT * FROM projects";
+        List<Project> projects = new ArrayList<>();
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                Project project = new Project();
+                project.setProjectId(rs.getString("projectid"));
+                project.setProjectName(rs.getString("projectname"));
+                project.setProfitMargin(rs.getDouble("profitmargin"));
+                project.setProjectStatus(ProjectStatus.valueOf(rs.getString("projectstatus")));
+                CustomerRepositoryI cr = new CustomerRepository();
+                Optional<Customer> c = cr.findCustomerByFullName(rs.getString("fullname"));
+                project.setCustomer(c.get());
+                projects.add(project);
+            }
+            return projects;
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            return null;
         }
     }
 }
