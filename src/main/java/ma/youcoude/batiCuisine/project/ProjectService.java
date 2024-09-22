@@ -8,7 +8,8 @@ import ma.youcoude.batiCuisine.component.workforce.Workforce;
 import ma.youcoude.batiCuisine.component.workforce.interfaces.WorkForceRepositoryI;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectRepositoryI;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectServiceI;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ProjectService implements ProjectServiceI {
@@ -23,6 +24,7 @@ public class ProjectService implements ProjectServiceI {
         this.workForceRepository = new WorkForceRepository();
     }
 
+    @Override
     public Project saveProject(Project project){
         String projectId = UUID.randomUUID().toString();
         project.setProjectId(projectId);
@@ -43,4 +45,26 @@ public class ProjectService implements ProjectServiceI {
         }
         return project;
     }
+
+    @Override
+    public List<Component> getAllComponentsOfProject(String projectId){
+        List<Component> allComponents = new ArrayList<>();
+        List<Component> materials = materialRepository.findAllMaterialsOfProject(projectId);
+        List<Component> workforces = workForceRepository.findAllWorkforcesOfProject(projectId);
+        allComponents.addAll(materials);
+        allComponents.addAll(workforces);
+        return allComponents;
+    }
+
+    @Override
+    public List<Project> getAllProjects(){
+        List<Project> allProjects = projectRepository.getAllProjects();
+        for(Project p : allProjects){
+            List<Component> components = getAllComponentsOfProject(p.getProjectId());
+            p.setComponents(components);
+        }
+        return allProjects;
+    }
+
+
 }
