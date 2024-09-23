@@ -1,6 +1,7 @@
 package ma.youcoude.batiCuisine.ui.Menu;
 
 import ma.youcoude.batiCuisine.ui.Processes.FetchingAllProjectsProcess;
+import ma.youcoude.batiCuisine.ui.Processes.FetchingProjectDetailsProcess;
 import ma.youcoude.batiCuisine.ui.Processes.ProjectCreationProcess;
 
 import java.util.Scanner;
@@ -9,11 +10,13 @@ public class Menu {
     private final Scanner scanner ;
     private final ProjectCreationProcess projectCreationProcess ;
     private final FetchingAllProjectsProcess fetchingAllProjectsProcess ;
+    private final FetchingProjectDetailsProcess fetchingProjectDetailsProcess ;
 
     public Menu(){
         scanner = new Scanner(System.in);
         projectCreationProcess = new ProjectCreationProcess();
         fetchingAllProjectsProcess = new FetchingAllProjectsProcess();
+        fetchingProjectDetailsProcess = new FetchingProjectDetailsProcess();
     }
 
     public void displayMenu(){
@@ -53,7 +56,7 @@ public class Menu {
                 fetchingAllProjectsProcess.handleFetchingAllProjects();
                 break;
             case 3:
-                System.out.println("Calculate Project Cost");
+                fetchingProjectDetailsProcess.handleFetchingProjectDetailsProcess();
                 break;
             case 4:
                 return;

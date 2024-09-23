@@ -27,6 +27,7 @@ public class ProjectRepository implements ProjectRepositoryI {
         }
     }
 
+    @Override
     public void saveProject(Project project){
         String query = "INSERT INTO projects VALUES (? , ? , ? , ? , ?)";
         try(PreparedStatement stmt = cnx.prepareStatement(query)){
@@ -65,4 +66,30 @@ public class ProjectRepository implements ProjectRepositoryI {
             return null;
         }
     }
+
+    @Override
+    public Optional<Project> getProjectByName(String projectName){
+        String query = "SELECT * FROM projects JOIN customers ON projects.fullname = customers.fullname WHERE projectname = ?";
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            stmt.setString(1 , projectName);
+            ResultSet rs = stmt.executeQuery();
+            Project project = new Project();
+            if(rs.next()){
+                project.setProjectId(rs.getString("projectid"));
+                project.setProjectName(rs.getString("projectname"));
+                project.setProfitMargin(rs.getDouble("profitmargin"));
+                Customer customer = new Customer();
+                customer.setFullName(rs.getString("fullname"));
+                customer.setAddress(rs.getString("adress"));
+                customer.setProfessional(rs.getBoolean("isprofessional"));
+                project.setCustomer(customer);
+                return Optional.of(project);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
 }

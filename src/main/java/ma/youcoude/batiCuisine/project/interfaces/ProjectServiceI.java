@@ -4,6 +4,7 @@ import ma.youcoude.batiCuisine.component.Component;
 import ma.youcoude.batiCuisine.project.Project;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectServiceI {
 
@@ -12,4 +13,6 @@ public interface ProjectServiceI {
     public List<Component> getAllComponentsOfProject(String projectId);
 
     public List<Project> getAllProjects();
+
+    public Project getProjectByName(String projectName);
 }
