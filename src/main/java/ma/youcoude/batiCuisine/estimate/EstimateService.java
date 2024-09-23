@@ -39,7 +39,8 @@ public class EstimateService implements EstimateServiceI {
         double workforcePriceAfterVAT = workForceService.calculateFinalPriceWithVAT(workforcePriceBeforeVAT , VAT);
 
         double priceBeforeProfitMargin = materialsPriceAfterVAT + workforcePriceAfterVAT;
-        return priceBeforeProfitMargin + (priceBeforeProfitMargin * project.getProfitMargin() / 100);
+        double priceBeforeDiscount =  priceBeforeProfitMargin + (priceBeforeProfitMargin * project.getProfitMargin() / 100);
+        return calculateDiscount(project , priceBeforeDiscount);
     }
 
     @Override
@@ -47,6 +48,19 @@ public class EstimateService implements EstimateServiceI {
         estimate.setEstimateId(UUID.randomUUID().toString());
         estimateRepository.save(estimate);
         return estimate;
+    }
+
+    @Override
+    public double calculateDiscount(Project project , double estimatedPrice){
+        if (project.getCustomer().isProfessional()){
+            if (estimatedPrice > 5000 && estimatedPrice < 10000){
+                return estimatedPrice - (estimatedPrice * 5 / 100);
+            }
+            else if (estimatedPrice > 10000){
+                return estimatedPrice - (estimatedPrice * 7.5 / 100);
+            }
+        }
+        return estimatedPrice;
     }
 
 }
