@@ -7,6 +7,8 @@ import ma.youcoude.batiCuisine.component.material.interfaces.MaterialServiceI;
 import ma.youcoude.batiCuisine.component.workforce.WorkForceService;
 import ma.youcoude.batiCuisine.component.workforce.Workforce;
 import ma.youcoude.batiCuisine.component.workforce.interfaces.WorkForceServiceI;
+import ma.youcoude.batiCuisine.estimate.EstimateService;
+import ma.youcoude.batiCuisine.estimate.interfaces.EstimateServiceI;
 import ma.youcoude.batiCuisine.project.Project;
 
 import java.util.List;
@@ -15,10 +17,12 @@ public class EstimateGenerator {
 
     private final MaterialServiceI materialService;
     private final WorkForceServiceI workForceService;
+    private final EstimateServiceI estimateService;
 
     public EstimateGenerator() {
         this.materialService = new MaterialService();
         this.workForceService = new WorkForceService();
+        this.estimateService = new EstimateService();
     }
 
     public void generateEstimate(Project project) {
@@ -85,7 +89,10 @@ public class EstimateGenerator {
         System.out.printf("║ %-74s ║\n", "Total project cost before profit margin: " + finalCost + " $");
         double profitMargin = project.getProfitMargin();
         double finalCostWithMargin = finalCost + (finalCost * profitMargin / 100);
+        double finalCostWithDiscount = estimateService.calculateDiscount(project , finalCostWithMargin);
         System.out.printf("║ %-74s ║\n", "Profit margin (" + (profitMargin) + "%): " + (finalCost * profitMargin / 100) + " $");
+        System.out.printf("║ %-74s ║\n", "Total Cost With Margin: " + finalCostWithMargin + " $");
+        System.out.printf("║ %-74s ║\n", "Discount (" + (finalCostWithMargin - finalCostWithDiscount) / finalCostWithMargin * 100 + "%): " + finalCostWithDiscount + " $");
         System.out.printf("║ %-74s ║\n", "Final total cost: " + finalCostWithMargin + " $");
         System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
     }

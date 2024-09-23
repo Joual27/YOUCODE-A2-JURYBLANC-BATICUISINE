@@ -309,17 +309,25 @@ public class ProjectCreationProcess {
                 c.setVAT(VAT);
             }
         }
-            System.out.println("Do you wanna apply any profit margin ? (Y/N)");
-            String choice1 = scanner.nextLine().trim();
-            if(choice1.equalsIgnoreCase("Y")){
-                System.out.println("ENTER THE PROFIT MARGIN IN %");
-                double profitMargin = scanner.nextDouble();
-                scanner.nextLine();
-                System.out.println("Profit Margin entered: " + profitMargin);
-                projectData.setProfitMargin(profitMargin);
+        else{
+            for(Component c : projectData.getComponents()){
+                c.setVAT(0.0);
             }
-            System.out.println("Calculating Overall Price ....");
-            handleFetchingProjectDetails();
+        }
+        System.out.println("Do you wanna apply any profit margin ? (Y/N)");
+        String choice1 = scanner.nextLine().trim();
+        if(choice1.equalsIgnoreCase("Y")){
+            System.out.println("ENTER THE PROFIT MARGIN IN %");
+            double profitMargin = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.println("Profit Margin entered: " + profitMargin);
+            projectData.setProfitMargin(profitMargin);
+        }
+        else{
+            projectData.setProfitMargin(0.0);
+        }
+        System.out.println("Calculating Overall Price ....");
+        handleFetchingProjectDetails();
         }
 
         public void handleFetchingProjectDetails(){
@@ -360,7 +368,7 @@ public class ProjectCreationProcess {
             System.out.println("--------------------------------------------------");
             Double finalWorkforceCost = workforceService.calculateOverallWorkForceCost(workforces);
 
-            if (projectData.getComponents().get(0).getVAT() == null){
+            if (projectData.getComponents().get(0).getVAT() == 0.0){
                 System.out.println("No VAT was applied to this project");
                 System.out.println("Overall WORKFORCE price is : " + finalWorkforceCost);
             }
@@ -380,7 +388,18 @@ public class ProjectCreationProcess {
             System.out.println("Profit margin: " + profitMargin);
             double estimateCost = overallProjectCost + profitMargin;
             System.out.println("Overall Cost after profit margin: " + estimateCost);
+            double finalEstimatedCost = estimateService.calculateDiscount(projectData , estimateCost);
+            if (finalEstimatedCost == estimateCost){
+                System.out.println("NO DISCOUNTS WERE APPLIED TO YOUR PROJECT !");
+            }
+            else {
+                System.out.println("YOU GOT A DISCOUNT OF : " + (estimateCost - finalEstimatedCost)/ estimateCost * 100 );
+                System.out.println("The final price is : " + finalEstimatedCost);
+            }
+
             System.out.println("--------------------------------------------------");
+
+
 
             while (true){
                 System.out.println("Do you Want To Generate an estimate for This Project ? (Y/N)");
@@ -426,7 +445,7 @@ public class ProjectCreationProcess {
                     Estimate e = new Estimate();
                     e.setIssuedAt(issueDate);
                     e.setValidityDate(validityDate);
-                    e.setOverallEstimatedPrice(estimateCost);
+                    e.setOverallEstimatedPrice(finalEstimatedCost);
                     Project p = new Project();
                     p.setProjectId(projectData.getProjectId());
                     e.setProject(p);
