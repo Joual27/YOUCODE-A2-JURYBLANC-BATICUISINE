@@ -25,8 +25,9 @@ public class EstimateRepository implements EstimateRepositoryI {
             stmt.setDouble(2,estimate.getOverallEstimatedPrice());
             stmt.setTimestamp(3, Timestamp.valueOf(estimate.getIssuedAt()));
             stmt.setDate(4, Date.valueOf(estimate.getValidityDate()));
-            stmt.setBoolean(5 , false);
+            stmt.setBoolean(5 , estimate.isAccepted());
             stmt.setString(6,estimate.getProject().getProjectId());
+            stmt.executeUpdate();
         }
         catch (SQLException e){
             e.printStackTrace();

@@ -11,15 +11,16 @@ import java.util.stream.Collectors;
 public class WorkForceService implements WorkForceServiceI {
     @Override
     public List<Workforce> filterWorkForceOnly(List<Component> components){
-        return components.stream()
+            return components.stream()
                 .filter(w -> w.getType().equals("Workforce"))
                 .map(w -> (Workforce) w)
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public double calculateSpecificWorkForceCost(Workforce workforce){
-        return workforce.getWorkHours() * workforce.getWorkHours() * workforce.getWorkHours();
+        return workforce.getWorkHours() * workforce.getHourlyRate() * workforce.getWorkerProductivityCoefficient();
     }
 
     @Override

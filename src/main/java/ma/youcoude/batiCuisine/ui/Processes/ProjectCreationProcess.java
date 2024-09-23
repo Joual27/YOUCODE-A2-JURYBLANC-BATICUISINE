@@ -18,6 +18,7 @@ import ma.youcoude.batiCuisine.exceptions.CustomerNotFoundException;
 import ma.youcoude.batiCuisine.project.Project;
 import ma.youcoude.batiCuisine.project.ProjectService;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectServiceI;
+import ma.youcoude.batiCuisine.utils.Cache;
 import ma.youcoude.batiCuisine.utils.DatesValidator;
 import ma.youcoude.batiCuisine.utils.EstimateGenerator;
 import ma.youcoude.batiCuisine.utils.Validator;
@@ -26,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ProjectCreationProcess {
@@ -51,8 +53,18 @@ public class ProjectCreationProcess {
         handleAssociatingCustomerToProject();
         System.out.println("----------------Creating Project -------------\n");
         System.out.println("Enter the name of the project: ");
-        String projectName = scanner.nextLine();
-        projectData.setProjectName(projectName);
+         while (true){
+             String projectName = scanner.nextLine();
+             Project existingProject = projectService.getProjectByName(projectName);
+
+             if (existingProject != null) {
+                 System.out.println("A project with this name already exists! TRY ANOTHER NAME !");
+             }
+             else {
+                 projectData.setProjectName(projectName);
+                 break;
+             }
+        }
         projectData.setProjectStatus(ProjectStatus.ONGOING);
         handleAddingMaterialProcess();
         handleAddingWorkForceProcess();
@@ -86,7 +98,13 @@ public class ProjectCreationProcess {
         System.out.println("Please enter the Full Name of the customer: ");
         String fullName = scanner.nextLine().trim();
         try{
-            Customer existingCustomer = customerService.getCustomerByFullName(fullName);
+            Customer existingCustomer;
+            if (Cache.getCustomer(fullName) != null){
+                existingCustomer = Cache.getCustomer(fullName);
+            }
+            else{
+                existingCustomer = customerService.getCustomerByFullName(fullName);
+            }
             System.out.println("Customer found !");
             System.out.println("Full Name : " + existingCustomer.getFullName());
             System.out.println("Address : " + existingCustomer.getAddress());
@@ -442,14 +460,33 @@ public class ProjectCreationProcess {
                             System.out.println("Validity Date can't be before Issue Date");
                         }
                     }
+                    boolean isEstimateAccepted;
+                    while (true){
+                        System.out.println("Was This Estimate ALready accepted by " + projectData.getCustomer().getFullName() + " ? (Y/N)");
+                        String choice = scanner.nextLine();
+                        if (choice.equalsIgnoreCase("y")){
+                            isEstimateAccepted = true;
+                            break;
+                        }
+                        else if (choice.equalsIgnoreCase("N")){
+                            isEstimateAccepted = false;
+                            break;
+                        }
+                        else {
+                            System.out.println("Invalid option please enter either Y or N !");
+                        }
+                    }
+
                     Estimate e = new Estimate();
                     e.setIssuedAt(issueDate);
                     e.setValidityDate(validityDate);
                     e.setOverallEstimatedPrice(finalEstimatedCost);
+                    e.setAccepted(isEstimateAccepted);
                     Project p = new Project();
                     p.setProjectId(projectData.getProjectId());
                     e.setProject(p);
                     Estimate createdEstimate = estimateService.save(e);
+                    System.out.println("Estimate" + createdEstimate.getEstimateId() + " Created Successfully !");
                     eg.generateEstimate(projectData);
                     break;
                 }
