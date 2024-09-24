@@ -79,6 +79,7 @@ public class ProjectRepository implements ProjectRepositoryI {
                 project.setProjectId(rs.getString("projectid"));
                 project.setProjectName(rs.getString("projectname"));
                 project.setProfitMargin(rs.getDouble("profitmargin"));
+                project.setProjectStatus(ProjectStatus.valueOf(rs.getString("projectstatus")));
                 Customer customer = new Customer();
                 customer.setFullName(rs.getString("fullname"));
                 customer.setAddress(rs.getString("adress"));
@@ -116,10 +117,10 @@ public class ProjectRepository implements ProjectRepositoryI {
 
     @Override
     public void updateProject(Project project){
-        String query = "UPDATE project set profitMargin = ? , projectStatus , ? WHERE projectName = ?";
+        String query = "UPDATE projects set profitMargin = ? , projectStatus = ? WHERE projectName = ?";
         try (PreparedStatement stmt = cnx.prepareStatement(query)){
             stmt.setDouble(1, project.getProfitMargin());
-            stmt.setString(2, project.getProjectStatus().name());
+            stmt.setObject(2, project.getProjectStatus().name() , java.sql.Types.OTHER);
             stmt.setString(3, project.getProjectName());
             stmt.executeUpdate();
         }

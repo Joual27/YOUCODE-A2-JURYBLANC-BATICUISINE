@@ -1,6 +1,7 @@
 package ma.youcoude.batiCuisine.ui.Menu;
 
 import ma.youcoude.batiCuisine.ui.Menu.subMenus.CustomerSubMenu;
+import ma.youcoude.batiCuisine.ui.Menu.subMenus.ProjectSubMenu;
 import ma.youcoude.batiCuisine.ui.Processes.FetchingAllProjectsProcess;
 import ma.youcoude.batiCuisine.ui.Processes.FetchingProjectDetailsProcess;
 import ma.youcoude.batiCuisine.ui.Processes.ProjectCreationProcess;
@@ -13,6 +14,7 @@ public class Menu extends MenuBlueprint{
     private final FetchingAllProjectsProcess fetchingAllProjectsProcess ;
     private final FetchingProjectDetailsProcess fetchingProjectDetailsProcess ;
     private final CustomerSubMenu customerSubMenu ;
+    private final ProjectSubMenu projectSubMenu ;
 
     public Menu(){
         scanner = new Scanner(System.in);
@@ -20,6 +22,7 @@ public class Menu extends MenuBlueprint{
         fetchingAllProjectsProcess = new FetchingAllProjectsProcess();
         fetchingProjectDetailsProcess = new FetchingProjectDetailsProcess();
         customerSubMenu = new CustomerSubMenu();
+        projectSubMenu = new ProjectSubMenu();
     }
 
     @Override
@@ -66,8 +69,12 @@ public class Menu extends MenuBlueprint{
             case 3:
                 fetchingProjectDetailsProcess.handleFetchingProjectDetailsProcess();
                 break;
+            case 4:
+                projectSubMenu.startMenu();
+                break;
             case 5 :
                 customerSubMenu.startMenu();
+                break;
             case 6:
                 return;
             default:
