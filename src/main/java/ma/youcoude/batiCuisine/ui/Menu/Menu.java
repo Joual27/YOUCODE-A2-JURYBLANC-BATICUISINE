@@ -1,5 +1,6 @@
 package ma.youcoude.batiCuisine.ui.Menu;
 
+import ma.youcoude.batiCuisine.ui.Menu.subMenus.CustomerSubMenu;
 import ma.youcoude.batiCuisine.ui.Processes.FetchingAllProjectsProcess;
 import ma.youcoude.batiCuisine.ui.Processes.FetchingProjectDetailsProcess;
 import ma.youcoude.batiCuisine.ui.Processes.ProjectCreationProcess;
@@ -11,12 +12,14 @@ public class Menu extends MenuBlueprint{
     private final ProjectCreationProcess projectCreationProcess ;
     private final FetchingAllProjectsProcess fetchingAllProjectsProcess ;
     private final FetchingProjectDetailsProcess fetchingProjectDetailsProcess ;
+    private final CustomerSubMenu customerSubMenu ;
 
     public Menu(){
         scanner = new Scanner(System.in);
         projectCreationProcess = new ProjectCreationProcess();
         fetchingAllProjectsProcess = new FetchingAllProjectsProcess();
         fetchingProjectDetailsProcess = new FetchingProjectDetailsProcess();
+        customerSubMenu = new CustomerSubMenu();
     }
 
     @Override
@@ -63,7 +66,9 @@ public class Menu extends MenuBlueprint{
             case 3:
                 fetchingProjectDetailsProcess.handleFetchingProjectDetailsProcess();
                 break;
-            case 4:
+            case 5 :
+                customerSubMenu.startMenu();
+            case 6:
                 return;
             default:
                 System.out.println("Invalid choice ,PLease enter a number between 1 and 4");

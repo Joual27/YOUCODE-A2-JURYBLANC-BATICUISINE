@@ -85,8 +85,8 @@ public class CustomerRepository implements CustomerRepositoryI {
     }
 
     @Override
-    public void UpdateCustomer(Customer customer){
-        String query = "UPDATE customer SET adress = ?, phoneNumber = ? , isProfessional = ? WHERE fullname = ?";
+    public void updateCustomer(Customer customer){
+        String query = "UPDATE customers SET adress = ?, phoneNumber = ? , isProfessional = ? WHERE fullname = ?";
         try(PreparedStatement stmt = cnx.prepareStatement(query)){
             stmt.setString(1, customer.getAddress());
             stmt.setString(2, customer.getPhoneNumber());
@@ -100,8 +100,15 @@ public class CustomerRepository implements CustomerRepositoryI {
     }
 
     @Override
-    public void deleteCustomer(Customer customer){
-
+    public void deleteCustomer(String customerFullName){
+        String query = "DELETE FROM customers WHERE fullName = ?";
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            stmt.setString(1,customerFullName);
+            stmt.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
 

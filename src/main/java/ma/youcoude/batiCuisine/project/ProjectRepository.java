@@ -114,4 +114,29 @@ public class ProjectRepository implements ProjectRepositoryI {
         return Optional.empty();
     }
 
+    @Override
+    public void updateProject(Project project){
+        String query = "UPDATE project set profitMargin = ? , projectStatus , ? WHERE projectName = ?";
+        try (PreparedStatement stmt = cnx.prepareStatement(query)){
+            stmt.setDouble(1, project.getProfitMargin());
+            stmt.setString(2, project.getProjectStatus().name());
+            stmt.setString(3, project.getProjectName());
+            stmt.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void deleteProject(String projectName){
+        String query = "DELETE FROM projects WHERE projectName = ?";
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            stmt.setString(1 , projectName);
+            stmt.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
 }
