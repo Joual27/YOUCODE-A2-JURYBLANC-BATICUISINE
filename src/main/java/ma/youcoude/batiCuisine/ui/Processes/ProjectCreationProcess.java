@@ -166,6 +166,7 @@ public class ProjectCreationProcess {
             System.out.println("1 - Yes");
             System.out.println("2 - No");
             int choice = scanner.nextInt();
+            scanner.nextLine();
             if(choice == 1){
                 return true;
             }
