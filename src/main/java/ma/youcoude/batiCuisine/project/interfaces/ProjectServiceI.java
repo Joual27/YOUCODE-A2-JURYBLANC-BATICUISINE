@@ -1,6 +1,7 @@
 package ma.youcoude.batiCuisine.project.interfaces;
 
 import ma.youcoude.batiCuisine.component.Component;
+import ma.youcoude.batiCuisine.estimate.Estimate;
 import ma.youcoude.batiCuisine.project.Project;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ProjectServiceI {
     public List<Project> getAllProjects();
 
     public Project getProjectByName(String projectName);
+
+    public Estimate getEstimateOfProject(String projectId);
 }

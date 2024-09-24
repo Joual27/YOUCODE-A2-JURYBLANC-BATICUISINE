@@ -30,7 +30,14 @@ public class EstimateGenerator {
         System.out.printf("║ %-74s ║\n", "Project: " + project.getProjectName());
         System.out.printf("║ %-74s ║\n", "Client: " + project.getCustomer().getFullName());
         System.out.printf("║ %-74s ║\n", "Address: " + project.getCustomer().getAddress());
+        if (project.getEstimate() != null) {
+            String accepted = project.getEstimate().isAccepted() ? "Accepted" : "Not accepted yet !";
+            System.out.printf("║ %-74s ║\n", "Estimate Issued at: " + project.getEstimate().getIssuedAt().toLocalDate().toString());
+            System.out.printf("║ %-74s ║\n", "Estimate Valid until: " + project.getEstimate().getValidityDate().toString());
+            System.out.printf("║ %-74s ║\n", "Acceptation status: " + accepted);
+        }
         System.out.println("╠══════════════════════════════════════════════════════════════════════════════╣");
+
 
 
         List<Material> materials = materialService.filterMaterialsOnly(project.getComponents());

@@ -6,6 +6,7 @@ import ma.youcoude.batiCuisine.component.material.MaterialRepository;
 import ma.youcoude.batiCuisine.component.workforce.WorkForceRepository;
 import ma.youcoude.batiCuisine.component.workforce.Workforce;
 import ma.youcoude.batiCuisine.component.workforce.interfaces.WorkForceRepositoryI;
+import ma.youcoude.batiCuisine.estimate.Estimate;
 import ma.youcoude.batiCuisine.exceptions.ProjectNotFoundException;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectRepositoryI;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectServiceI;
@@ -71,6 +72,12 @@ public class ProjectService implements ProjectServiceI {
     @Override
     public Project getProjectByName(String projectName) {
         return projectRepository.getProjectByName(projectName)
+                .orElse(null);
+    }
+
+    @Override
+    public Estimate getEstimateOfProject(String projectId){
+        return projectRepository.getEstimateOfProject(projectId)
                 .orElse(null);
     }
 

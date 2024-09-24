@@ -31,6 +31,7 @@ public class FetchingAllProjectsProcess {
             System.out.println("Project ID: " + project.getProjectId());
             System.out.println("Project Name: " + project.getProjectName());
             System.out.println("Project Address: " + project.getCustomer().getAddress());
+
             System.out.println("--------------------------------------------------");
 
             List<Component> components = project.getComponents();

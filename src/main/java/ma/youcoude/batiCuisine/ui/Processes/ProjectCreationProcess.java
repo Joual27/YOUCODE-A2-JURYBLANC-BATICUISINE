@@ -487,6 +487,7 @@ public class ProjectCreationProcess {
                     e.setProject(p);
                     Estimate createdEstimate = estimateService.save(e);
                     System.out.println("Estimate" + createdEstimate.getEstimateId() + " Created Successfully !");
+                    projectData.setEstimate(createdEstimate);
                     eg.generateEstimate(projectData);
                     break;
                 }

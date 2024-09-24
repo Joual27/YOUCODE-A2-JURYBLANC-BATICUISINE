@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class CustomerRepository implements CustomerRepositoryI {
@@ -59,6 +61,49 @@ public class CustomerRepository implements CustomerRepositoryI {
             e.printStackTrace();
         }
     }
+
+
+    @Override
+    public List<Customer> findAllCustomers(){
+        String query = "SELECT * FROM customers";
+        List<Customer> customers = new ArrayList<>();
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Customer customer = new Customer();
+                customer.setFullName(rs.getString("fullName"));
+                customer.setAddress(rs.getString("adress"));
+                customer.setPhoneNumber(rs.getString("phoneNumber"));
+                customer.setProfessional(rs.getBoolean("isProfessional"));
+                customers.add(customer);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return customers;
+    }
+
+    @Override
+    public void UpdateCustomer(Customer customer){
+        String query = "UPDATE customer SET adress = ?, phoneNumber = ? , isProfessional = ? WHERE fullname = ?";
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            stmt.setString(1, customer.getAddress());
+            stmt.setString(2, customer.getPhoneNumber());
+            stmt.setBoolean(3, customer.isProfessional());
+            stmt.setString(4, customer.getFullName());
+            stmt.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteCustomer(Customer customer){
+
+    }
+
 
 
 
