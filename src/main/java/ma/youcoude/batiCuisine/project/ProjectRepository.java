@@ -5,6 +5,7 @@ import ma.youcoude.batiCuisine.customer.CustomerRepository;
 import ma.youcoude.batiCuisine.customer.interfaces.CustomerRepositoryI;
 import ma.youcoude.batiCuisine.database.DbConnection;
 import ma.youcoude.batiCuisine.enums.ProjectStatus;
+import ma.youcoude.batiCuisine.estimate.Estimate;
 import ma.youcoude.batiCuisine.project.interfaces.ProjectRepositoryI;
 
 import java.sql.Connection;
@@ -84,6 +85,27 @@ public class ProjectRepository implements ProjectRepositoryI {
                 customer.setProfessional(rs.getBoolean("isprofessional"));
                 project.setCustomer(customer);
                 return Optional.of(project);
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Estimate> getEstimateOfProject(String projectId){
+        String query = "SELECT * FROM estimates WHERE projectId = ?";
+        try(PreparedStatement stmt = cnx.prepareStatement(query)){
+            stmt.setString(1 , projectId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                Estimate estimate = new Estimate();
+                estimate.setOverallEstimatedPrice(rs.getDouble("estimatedoverallprice"));
+                estimate.setIssuedAt(rs.getTimestamp("issuedat").toLocalDateTime());
+                estimate.setValidityDate(rs.getDate("validitydate").toLocalDate());
+                estimate.setAccepted(rs.getBoolean("accepted"));
+                return  Optional.of(estimate);
             }
         }
         catch (SQLException e){

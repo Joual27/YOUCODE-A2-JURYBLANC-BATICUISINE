@@ -3,6 +3,8 @@ package ma.youcoude.batiCuisine.customer;
 import ma.youcoude.batiCuisine.customer.interfaces.CustomerServiceI;
 import ma.youcoude.batiCuisine.exceptions.CustomerNotFoundException;
 
+import java.util.List;
+
 public class CustomerService implements CustomerServiceI {
 
     private final CustomerRepository customerRepository = new CustomerRepository();
@@ -17,5 +19,20 @@ public class CustomerService implements CustomerServiceI {
     public Customer saveCustomer(Customer customer){
         customerRepository.saveCustomer(customer);
         return customer;
+    }
+
+    @Override
+    public List<Customer> getAllCustomers(){
+        return customerRepository.findAllCustomers();
+    }
+
+    @Override
+    public Customer updateCustomer(Customer customer){
+
+    }
+
+    @Override
+    public Customer deleteCustomer(Customer customer){
+
     }
 }

@@ -6,7 +6,7 @@ import ma.youcoude.batiCuisine.ui.Processes.ProjectCreationProcess;
 
 import java.util.Scanner;
 
-public class Menu {
+public class Menu extends MenuBlueprint{
     private final Scanner scanner ;
     private final ProjectCreationProcess projectCreationProcess ;
     private final FetchingAllProjectsProcess fetchingAllProjectsProcess ;
@@ -19,24 +19,28 @@ public class Menu {
         fetchingProjectDetailsProcess = new FetchingProjectDetailsProcess();
     }
 
+    @Override
     public void displayMenu(){
         System.out.println("========= Main Menu =========");
         System.out.println("1. Create a new project");
         System.out.println("2. Show All Projects");
         System.out.println("3. Calculate Project Cost");
-        System.out.println("4. Exit");
+        System.out.println("4. Handle Available Projects");
+        System.out.println("5. Handle available Customers");
+        System.out.println("6. Exit");
         System.out.println("=============================");
     }
 
+    @Override
     public int getMenuChoice() {
         int choice = -1;
 
-        while (choice < 1 || choice > 4) {
+        while (choice < 1 || choice > 6) {
             System.out.println("Enter your choice ( 1-4 ) ");
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
 
-                if (choice < 1 || choice > 4) {
+                if (choice < 1 || choice > 6) {
                     System.out.println("Invalid choice ,PLease enter a number between 1 and 5 ");
                 }
             } else {
@@ -47,6 +51,7 @@ public class Menu {
         return choice;
     }
 
+    @Override
     public void handleChoice(int choice){
         switch (choice) {
             case 1:
@@ -66,13 +71,14 @@ public class Menu {
         }
     }
 
+    @Override
     public void startMenu(){
         int choice;
         do{
             displayMenu();
             choice = getMenuChoice();
             handleChoice(choice);
-        }while(choice != 4);
+        }while(choice != 6);
     }
 
 
