@@ -18,4 +18,8 @@ public interface ProjectServiceI {
     public Project getProjectByName(String projectName);
 
     public Estimate getEstimateOfProject(String projectId);
+
+    public Project updateProject(Project project);
+
+    public Project deleteProject(String projectName);
 }

@@ -13,5 +13,5 @@ public interface CustomerServiceI {
 
     public Customer updateCustomer(Customer customer);
 
-    public Customer deleteCustomer(Customer customer);
+    public Customer deleteCustomer(String customerFullName);
 }

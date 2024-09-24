@@ -28,11 +28,13 @@ public class CustomerService implements CustomerServiceI {
 
     @Override
     public Customer updateCustomer(Customer customer){
-
+       customerRepository.updateCustomer(customer);
+       return customer;
     }
 
     @Override
-    public Customer deleteCustomer(Customer customer){
-
+    public Customer deleteCustomer(String customerFullName){
+        customerRepository.deleteCustomer(customerFullName);
+        return getCustomerByFullName(customerFullName);
     }
 }

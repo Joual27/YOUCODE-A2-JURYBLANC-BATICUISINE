@@ -12,5 +12,6 @@ public interface ProjectRepositoryI {
     public List<Project> getAllProjects();
     public Optional<Project> getProjectByName(String projectName);
     public Optional<Estimate> getEstimateOfProject(String projectId);
-
+    public void updateProject(Project project);
+    public void deleteProject(String projectName);
 }

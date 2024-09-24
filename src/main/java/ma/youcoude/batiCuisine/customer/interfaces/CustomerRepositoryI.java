@@ -10,6 +10,6 @@ public interface CustomerRepositoryI {
 
     public void saveCustomer(Customer customer);
     public List<Customer> findAllCustomers();
-    public void UpdateCustomer(Customer customer);
-    public void deleteCustomer(Customer customer);
+    public void updateCustomer(Customer customer);
+    public void deleteCustomer(String customerFullName);
 }

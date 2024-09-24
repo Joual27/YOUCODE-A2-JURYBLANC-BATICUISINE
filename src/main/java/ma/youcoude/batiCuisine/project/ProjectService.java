@@ -81,4 +81,16 @@ public class ProjectService implements ProjectServiceI {
                 .orElse(null);
     }
 
+    @Override
+    public Project updateProject(Project project){
+        projectRepository.updateProject(project);
+        return project;
+    }
+
+    @Override
+    public Project deleteProject(String projectName){
+        projectRepository.deleteProject(projectName);
+        return getProjectByName(projectName);
+    }
+
 }
